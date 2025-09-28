@@ -1,0 +1,141 @@
+=====================================
+INSY 8311-Window Funtions Assignment
+NAME:TETA Huguette
+ID: 28982
+DATE:29/9/2025
+=====================================
+==##STEP PROBLEM DEFINITION
+
+### BUSINESS CONTEXT
+*Company Name: East African Goods
+*Industry: Retail-Regional Specialty Products
++Department: Marketing and Sales Analytics
+*Location: Rwanda(Multiple Regional)
+*Focus: Analsis of local product sales peformance across different regions
+
+###DATA CHALLENGE
+the company currently lacks dynamic analysis at sales trends, product performance across different regions, and customer value segmentation.
+This makes it difficult to allocate marketing budgets effectively and identify regional best-sellers, leading to inefficient inventory management and missed revenue opportunities.
+
+### EXPECTED OUTCOME
+
+This analysis will identify top-performing products per region, track sales trens over time,segment customers into value tiers, 
+and provide data-driven recommendations for targeted marketing campaigns and inventory planning decisons.
+====================================
+##STEP 2: SUCCESS CRITERIA
+
+#### 5.MEASURABLE ANALYTICAL GOALS
+
+1. *Top 5 products per region (quarterly) using `RANK()`
+2. *Running monthly sales totals using `SUM() OVER()`
+3. *Month-over-month growth percentage using  `LAG()`
+4. *Customer value quartiles using `NTILE(4)` based on their total spending
+5. *3-month moving averages using `AVG() OVER()`
+=======================================
+
+##STEP 3: DATABASE SCHEMA 
+====Creating database and tables
+mysql> use administration;
+Database changed
+mysql> CREATE TABLE customers (
+    ->     customer_id INT PRIMARY KEY,
+    ->     name VARCHAR(100),
+    ->     region VARCHAR(50)
+    -> );
+
+mysql> CREATE TABLE products (
+    ->     product_id INT PRIMARY KEY,
+    ->     name VARCHAR(100),
+    ->     category VARCHAR(50)
+    -> );
+
+mysql> CREATE TABLE transactions (
+    ->     transaction_id INT PRIMARY KEY,
+    ->     customer_id INT,
+    ->     product_id INT,
+    ->     sale_date DATE,
+    ->     amount DECIMAL(12,2),
+    ->     FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+    ->     FOREIGN KEY (product_id) REFERENCES products(product_id)
+    -> );
+
+====inserting data into tables
+mysql> INSERT INTO customers VALUES
+    -> (1001, 'John Doe', 'Kigali'),
+    -> (1002, 'Akeza Rita', 'Musanze'),
+    -> (1003, 'Shyaka Ivan', 'Rubavu'),
+    -> (1004, 'Teta Huguette', 'Nyabihu'),
+    -> (1005, 'Akaliza Tracy', 'Gicumbi');
+
+mysql> INSERT INTO products VALUES
+    -> (2001, 'Coffee Beans', 'Beverages'),
+    -> (2002, 'Laptop', 'Electronics'),
+    -> (2003, 'printed papers', 'Stationery'),
+    -> (2004, 'Office Chairs', 'Furniture'),
+    -> (2005, 'Tables', 'Furniture');
+
+mysql> INSERT INTO transactions VALUES
+    -> (3001, 1001, 2001, '2024-01-15', 25000),
+    ->  (3002, 1002, 2002, '2024-01-17', 20000),
+    -> (3003, 1003, 2003, '2024-01-12', 19000),
+    ->  (3004, 1004, 2004, '2024-01-10', 24000),
+    -> (3005, 1005, 2005, '2024-01-13', 30000);
+===================================================
+##STEP 4:WINDOW FUNCTIONS IMPLEMENTATIONS
+1.RANKING
+mysql> SELECT region, product_id, product_name, total_sales, product_rank
+    -> FROM (
+    ->     SELECT
+    ->         c.region,
+    ->         p.product_id,
+    ->         p.name AS product_name,
+    ->         SUM(t.amount) AS total_sales,
+    ->         RANK() OVER (PARTITION BY c.region ORDER BY SUM(t.amount) DESC) AS product_rank
+    ->     FROM transactions t
+    ->     JOIN customers c ON t.customer_id = c.customer_id
+    ->     JOIN products p ON t.product_id = p.product_id
+    ->     GROUP BY c.region, p.product_id, p.name
+    -> ) AS ranked_products
+    -> WHERE product_rank <= 5
+    -> ORDER BY region, product_rank;
+
+2.AGGREGATE
+Mysql> SELECT
+    ->     DATE_FORMAT(sale_date, '%Y-%m') AS month,
+    ->     SUM(amount) AS monthly_sales,
+    ->     SUM(SUM(amount)) OVER (ORDER BY DATE_FORMAT(sale_date, '%Y-%m')) AS running_total,
+    ->     AVG(SUM(amount)) OVER (ORDER BY DATE_FORMAT(sale_date, '%Y-%m')) AS running_avg
+    -> FROM transactions
+    -> GROUP BY DATE_FORMAT(sale_date, '%Y-%m');
+
+3.NAVIGATION
+mysql> WITH monthly_sales AS (
+    ->     SELECT
+    ->         DATE_FORMAT(sale_date, '%Y-%m') AS month,
+    ->         SUM(amount) AS total_sales
+    ->     FROM transactions
+    ->     GROUP BY DATE_FORMAT(sale_date, '%Y-%m')
+    -> )
+    -> SELECT
+    ->     month,
+    ->     total_sales,
+    ->     LAG(total_sales) OVER (ORDER BY month) AS prev_month_sales,
+    ->     LEAD(total_sales) OVER (ORDER BY month) AS next_month_sales,
+    ->     ROUND(
+    ->         (total_sales - LAG(total_sales) OVER (ORDER BY month))
+    ->         / LAG(total_sales) OVER (ORDER BY month) * 100, 2
+    ->     ) AS growth_percent
+    -> FROM monthly_sales;
+
+4.DISTRIBUTION
+mysql> SELECT
+    ->     c.name,
+    ->     SUM(t.amount) AS total_spent,
+    ->     NTILE(4) OVER (ORDER BY SUM(t.amount) DESC) AS spend_quartile,
+    ->     CUME_DIST() OVER (ORDER BY SUM(t.amount) DESC) AS cumulative_distribution
+    -> FROM transactions t
+    -> JOIN customers c ON t.customer_id = c.customer_id
+    -> GROUP BY c.name;
+
+
+
