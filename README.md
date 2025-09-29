@@ -8,11 +8,11 @@ This project analyzes the local product sales performance across different regio
 
 
 a) Database Schema
-	•	ER Diagram 
-	•	Explanation of table
-	•	customers info
-	•	products info
-	•	transactions records
+	1.	ER Diagram 
+	2.	Explanation of table
+	3	customers info
+	4.	products info
+	5.	transactions records
 	
 
 b) Success Criteria
