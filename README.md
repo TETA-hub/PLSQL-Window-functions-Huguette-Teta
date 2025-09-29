@@ -2,7 +2,7 @@
 A comprehensive implementation of SQL window functions for business analytics, featuring customer segmentation, sales trend analysis, and regional performance metrics using Mysql. This academic project demonstrates practical applications of analytical SQL for e-commerce business intelligence.
 
           A, Problem diffentiton
-  1. Business Problem
+
 1.	Company: AfroMart Online Retail  
 2.	Department: Sales & Marketing Analytics  
 3.	ndustry:E-commerce Retail in East Africa  
