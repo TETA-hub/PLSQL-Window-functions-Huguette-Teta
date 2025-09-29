@@ -2,8 +2,10 @@
 NSY 8311 Window Functions Assignment: MySQL 8 analytical query implementation featuring RANK(), SUM() OVER(), LAG(), and NTILE() functions. Complete with schema design, business analysis, and professional documentation for retail sales optimization.
 
  Project Overview
+
 	•	Short business context (East African Goods, Marketing and sales analytics,Retail-Regional specialty products).
 This project analyzes the local product sales performance across different regions
+
 
 a) Database Schema
 	•	ER Diagram 
@@ -11,6 +13,7 @@ a) Database Schema
 	•	customers info
 	•	products info
 	•	transactions records
+	
 
 b) Success Criteria
 
