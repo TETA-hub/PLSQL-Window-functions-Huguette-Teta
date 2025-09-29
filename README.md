@@ -36,18 +36,28 @@ It also contain an ER-Diagram there is ascreenshot for it
 1.RANK():
      This shows the top 5 products per region/quarter, 
   interpretation: it helps to know which products are popular in which areas and during which time of the year
+
+  
 2.SUM() OVER():
     This Runs monthly sales totals,
   interpretation: This shows the cumulative sales up to each month, helping to track overall growth.
+
+  
 3.LAG()/LEAD()
     Month-over-month growth
   interpretation:This helps to see if sales are increasing or decreasing from one month to the next.
+
+  
 4.NTILE(4):
     Customer quartiles 
- interpretation:This helps to identify which customers are the top spenders (top quartile) and which are the lowest (bottom quartile).   
+ interpretation:This helps to identify which customers are the top spenders (top quartile) and which are the lowest (bottom quartile).
+
+ 
 5.AVG() OV:
     3-month moving averages
  interpretation: This smooths out short-term fluctuations and helps to see the underlying trend.
+
+ 
 
   Result Analysis
 1.Descriptive (What Happened)
