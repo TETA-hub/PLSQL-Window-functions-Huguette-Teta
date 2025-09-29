@@ -3,11 +3,10 @@ A comprehensive implementation of SQL window functions for business analytics, f
 
           A, Problem diffentiton
 
-1.	Company: AfroMart Online Retail  
+1.	Company: East African Goods
 2.	Department: Sales & Marketing Analytics  
-3.	ndustry:E-commerce Retail in East Africa  
 
-  2.Business Challenge:
+   2.Business Challenge:
  AfroMart needs to analyze customer purchasing patterns across East African regions to optimize inventory management, identify high-value customers, and develop targeted marketing campaigns. The company lacks data-driven insights into regional performance, customer segmentation, and sales trends.
 
  3.Expected Outcome:
